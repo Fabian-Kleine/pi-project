@@ -1,0 +1,6 @@
+# Add your project dependencies here, one per line.
+# To generate this file from your virtualenv run:
+#   pip freeze > requirements.txt
+# Example entries (uncomment and adjust as needed):
+# flask==2.2.5
+# requests==2.31.0
