@@ -4,7 +4,11 @@ This repository contains a Python project using a local virtual environment stor
 
 ## Quick start
 
-Activate the provided virtual environment (bash):
+If the virtual environment doesn't exist, create it first:
+
+    python3 -m venv python/myenv
+
+Activate the virtual environment (bash):
 
     source python/myenv/bin/activate
 
