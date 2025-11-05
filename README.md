@@ -1,12 +1,16 @@
 # Project repository
 
-This repository contains a Python project using a local virtual environment stored in `python/myenv/`.
+This repository contains a Python project using a local virtual environment stored in `python/.venv/`.
 
 ## Quick start
 
-Activate the provided virtual environment (bash):
+If the virtual environment doesn't exist, create it first:
 
-    source python/myenv/bin/activate
+    python3 -m venv python/.venv
+
+Activate the virtual environment (bash):
+
+    source python/.venv/bin/activate
 
 Verify Python is the expected version:
 

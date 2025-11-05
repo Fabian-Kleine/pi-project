@@ -1,6 +1,5 @@
-# Add your project dependencies here, one per line.
-# To generate this file from your virtualenv run:
-#   pip freeze > requirements.txt
-# Example entries (uncomment and adjust as needed):
-# flask==2.2.5
-# requests==2.31.0
+bme680==2.0.0
+mysql-connector-python==8.2.0
+protobuf==4.21.12
+RPi.GPIO==0.7.1
+smbus2==0.5.0
