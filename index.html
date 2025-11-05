@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Testseite — Webserver prüfen</title>
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:#f6f8fa; color:#111; margin:0; padding:40px; }
+    .card { max-width:820px; margin:0 auto; background:#fff; border:1px solid #e1e4e8; border-radius:8px; padding:24px; box-shadow:0 6px 18px rgba(0,0,0,0.04); }
+    h1 { margin:0 0 8px 0; font-size:24px; }
+    p.lead { margin:0 0 18px 0; color:#444; }
+    dl { display:grid; grid-template-columns: 200px 1fr; gap:8px 16px; }
+    dt { color:#666; font-weight:600; }
+    dd { margin:0; color:#222; }
+    .ok { color: #137333; font-weight:700; }
+    .err { color: #a61e4d; font-weight:700; }
+    pre { background:#f3f4f6; padding:10px; border-radius:6px; overflow:auto; }
+    footer { margin-top:18px; color:#666; font-size:13px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Testseite — Webserver funktioniert?</h1>
+    <p class="lead">Diese kleine Seite hilft beim schnellen Test, ob dein Webserver statische Dateien ausliefert und einfache HTTP-Antworten zurückgibt.</p>
+
+    <dl>
+      <dt>URL</dt><dd id="url">—</dd>
+      <dt>Client-Zeit</dt><dd id="time">—</dd>
+      <dt>User-Agent</dt><dd id="ua">—</dd>
+      <dt>HEAD auf diese Seite</dt><dd id="head-status">prüfe...</dd>
+      <dt>HEAD auf /nonexistent (soll 404 liefern)</dt><dd id="missing-status">prüfe...</dd>
+      <dt>Fetch JSON /health (optional)</dt><dd id="health-status">nicht geprüft</dd>
+      <dt>Bemerkung</dt><dd>Wenn "HEAD auf diese Seite" 200 zurückgibt, liefert der Server statische Dateien korrekt aus.</dd>
+    </dl>
+
+    <h2 style="margin-top:18px">Rohantwort (Debug)</h2>
+    <pre id="debug">keine</pre>
+
+    <footer>
+      Anleitung: Datei als index.html in das Document Root des Webservers legen (z.B. /var/www/html/index.html) und dann im Browser die Serveradresse öffnen.
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById('url').textContent = location.href;
+    document.getElementById('time').textContent = new Date().toLocaleString();
+    document.getElementById('ua').textContent = navigator.userAgent;
+
+    // Hilfsfunktion: HEAD request und Status zeigen
+    async function checkHead(path, elId) {
+      try {
+        const res = await fetch(path, { method: 'HEAD', cache: 'no-store' });
+        document.getElementById(elId).innerHTML = (res.status >= 200 && res.status < 300)
+          ? ('<span class="ok">HTTP ' + res.status + ' OK</span>')
+          : ('<span class="err">HTTP ' + res.status + '</span>');
+        return res;
+      } catch (e) {
+        document.getElementById(elId).innerHTML = '<span class="err">Fehler: ' + e.message + '</span>';
+        return null;
+      }
+    }
+
+    // Prüfe diese Seite
+    checkHead(location.pathname, 'head-status')
+      .then(r => r && (document.getElementById('debug').textContent = 'HEAD ' + location.pathname + ' -> HTTP ' + r.status));
+
+    // Prüfe absichtlich fehlende Ressource
+    checkHead('/nonexistent-404-test-please-ignore', 'missing-status');
+
+    // Optional: versuche /health als JSON (häufiger Endpunkt)
+    (async function(){
+      try {
+        const res = await fetch('/health', { method: 'GET', cache:'no-store' });
+        const txt = await res.text();
+        document.getElementById('health-status').textContent = 'HTTP ' + res.status + ' — ' + (txt.length ? txt.slice(0,400) : '(leer)');
+        document.getElementById('debug').textContent += '\n\nGET /health -> HTTP ' + res.status + '\n' + txt;
+      } catch (e) {
+        document.getElementById('health-status').textContent = 'Fehler: ' + e.message;
+      }
+    })();
+  </script>
+</body>
+</html>
