@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Users, UserX } from "lucide-vue-next";
+import { Bubbles, Droplets, Thermometer, WindArrowDown } from "lucide-vue-next";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 </script>
 
@@ -8,7 +8,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
     <Card class="gap-2">
       <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle class="text-sm font-medium">Temperatur</CardTitle>
-        <UserX class="h-4 w-4 text-muted-foreground" />
+        <Thermometer class="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent>
         <div class="text-2xl font-bold">20 °C</div>
@@ -17,7 +17,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
     <Card class="gap-2">
       <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle class="text-sm font-medium">Luftfeuchtigkeit</CardTitle>
-        <Users class="h-4 w-4 text-muted-foreground" />
+        <Droplets class="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent>
         <div class="text-2xl font-bold">45</div>
@@ -26,7 +26,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
     <Card class="gap-2">
       <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle class="text-sm font-medium">Luftdruck</CardTitle>
-        <Users class="h-4 w-4 text-muted-foreground" />
+        <WindArrowDown class="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent>
         <div class="text-2xl font-bold">20</div>
@@ -34,8 +34,8 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
     </Card>
     <Card class="gap-2">
       <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle class="text-sm font-medium">Kein Plan</CardTitle>
-        <Users class="h-4 w-4 text-muted-foreground" />
+        <CardTitle class="text-sm font-medium">VOC</CardTitle>
+        <Bubbles class="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent>
         <div class="text-2xl font-bold">20</div>

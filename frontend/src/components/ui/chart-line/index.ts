@@ -39,6 +39,14 @@ export interface BaseChartProps<T extends Record<string, any>> {
    */
   yFormatter?: (tick: number | Date, i: number, ticks: number[] | Date[]) => string
   /**
+   * X-axis label (title)
+   */
+  xLabel?: string
+  /**
+   * Y-axis label (title)
+   */
+  yLabel?: string
+  /**
    * Controls the visibility of the X axis.
    * @default true
    */

@@ -82,6 +82,7 @@ function handleLegendItemClick(d: BulletLegendItemInterface, i: number) {
         v-if="showXAxis"
         type="x"
         :tick-format="xFormatter ?? ((v: number) => data[v]?.[index])"
+        :label="xLabel"
         :grid-line="false"
         :tick-line="false"
         tick-text-color="hsl(var(--vis-text-color))"
@@ -91,6 +92,7 @@ function handleLegendItemClick(d: BulletLegendItemInterface, i: number) {
         type="y"
         :tick-line="false"
         :tick-format="yFormatter"
+        :label="yLabel"
         :domain-line="false"
         :grid-line="showGridLine"
         :attributes="{
