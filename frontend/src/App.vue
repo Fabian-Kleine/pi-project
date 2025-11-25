@@ -48,7 +48,7 @@ const lastHourReadings = allReadings.slice(0, 12);
     <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
       <Card class="col-span-4">
         <CardHeader>
-          <CardTitle>Diagramm</CardTitle>
+          <CardTitle>Diagramm Temperaturvorhersage</CardTitle>
         </CardHeader>
         <CardContent class="p-0">
           <PersonTemperatureDiagramm />
