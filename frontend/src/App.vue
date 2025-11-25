@@ -1,10 +1,33 @@
 <script setup lang="ts">
 import TemperatureForecast from './components/TemperatureForecast.vue';
 import CurrentVocValues from './components/CurrentVocValues.vue';
+import RecentReadings, { type Reading } from './components/RecentReadings.vue';
 import { Tabs, TabsList, TabsContent, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from './components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './components/ui/dialog';
 import PersonTemperatureDiagramm from './components/PersonTemperatureDiagramm.vue';
 import { Button } from './components/ui/button';
+
+// Generate mock data
+const generateReadings = (): Reading[] => {
+  const readings: Reading[] = [];
+  const now = new Date();
+  // Generate readings for the whole day (every 5 minutes)
+  for (let i = 0; i < 288; i++) { // 24 hours * 12 readings/hour = 288
+    const date = new Date(now.getTime() - i * 5 * 60 * 1000);
+    readings.push({
+      time: date.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }),
+      temperature: Number((20 + Math.random() * 5).toFixed(1)),
+      voc: Math.floor(100 + Math.random() * 400),
+      pressure: Math.floor(1000 + Math.random() * 30),
+      humidity: Math.floor(40 + Math.random() * 40)
+    });
+  }
+  return readings;
+};
+
+const allReadings = generateReadings();
+const lastHourReadings = allReadings.slice(0, 12);
 </script>
 
 <template>
@@ -31,20 +54,37 @@ import { Button } from './components/ui/button';
           <PersonTemperatureDiagramm />
         </CardContent>
       </Card>
-      <Card class="col-span-3">
+      <Card class="col-span-3 flex flex-col">
         <CardHeader>
           <CardTitle>Letzte Messwerte</CardTitle>
           <CardDescription>
             Die Messwerte der letzten Stunden im Überblick.
           </CardDescription>
           <CardAction>
-            <Button variant="outline">
-              Alle anzeigen
-            </Button>
+            <Dialog>
+              <DialogTrigger as-child>
+                <Button variant="outline">
+                  Alle anzeigen
+                </Button>
+              </DialogTrigger>
+              <DialogContent class="max-w-2xl max-h-[80vh]">
+                <DialogHeader>
+                  <DialogTitle>Alle Messwerte des Tages</DialogTitle>
+                  <DialogDescription>
+                    Messwerte der letzten 24 Stunden im Überblick.
+                  </DialogDescription>
+                </DialogHeader>
+                <div class="h-[60vh] overflow-y-auto pr-4">
+                  <RecentReadings :readings="allReadings" />
+                </div>
+              </DialogContent>
+            </Dialog>
           </CardAction>
         </CardHeader>
-        <CardContent>
-          test
+        <CardContent class="flex-1 overflow-hidden">
+          <div class="h-[350px] overflow-y-auto pr-4">
+            <RecentReadings :readings="lastHourReadings" />
+          </div>
         </CardContent>
       </Card>
     </div>
