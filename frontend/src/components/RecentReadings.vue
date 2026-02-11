@@ -1,14 +1,8 @@
 <script setup lang="ts">
-export interface Reading {
-  time: string;
-  temperature: number;
-  voc: number;
-  pressure: number;
-  humidity: number;
-}
+import { type ReadingHistory } from '@/types';
 
 defineProps<{
-  readings: Reading[]
+  readings: ReadingHistory[]
 }>()
 </script>
 
@@ -19,9 +13,9 @@ defineProps<{
         <span class="text-sm font-medium">{{ reading.time }}</span>
       </div>
       <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground flex-1">
-        <span>VOC: {{ reading.voc }} ppm</span>
-        <span>{{ reading.pressure }} hPa</span>
         <span>{{ reading.humidity }}%</span>
+        <span>{{ reading.pressure }} hPa</span>
+        <span>{{ reading.gasResistance }} &Omega;</span>
       </div>
       <div class="font-medium whitespace-nowrap">
         {{ reading.temperature }}°C

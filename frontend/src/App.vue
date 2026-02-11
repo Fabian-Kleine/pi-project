@@ -1,62 +1,61 @@
 <script setup lang="ts">
 import TemperatureForecast from './components/TemperatureForecast.vue';
 import CurrentVocValues from './components/CurrentVocValues.vue';
-import RecentReadings, { type Reading } from './components/RecentReadings.vue';
+import RecentReadings from './components/RecentReadings.vue';
 import { Tabs, TabsList, TabsContent, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from './components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './components/ui/dialog';
 import PersonTemperatureDiagramm from './components/PersonTemperatureDiagramm.vue';
 import TemperatureTrendDiagramm from './components/TemperatureTrendDiagramm.vue';
 import { Button } from './components/ui/button';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
+import { useLiveData } from './lib/db';
+import { RefreshCcw } from 'lucide-vue-next';
 
-// Generate mock data
-const generateReadings = (): Reading[] => {
-  const readings: Reading[] = [];
-  const now = new Date();
-  // Generate readings for the whole day (every 5 minutes)
-  for (let i = 0; i < 288; i++) { // 24 hours * 12 readings/hour = 288
-    const date = new Date(now.getTime() - i * 5 * 60 * 1000);
-    readings.push({
-      time: date.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }),
-      temperature: Number((20 + Math.random() * 5).toFixed(1)),
-      voc: Math.floor(100 + Math.random() * 400),
-      pressure: Math.floor(1000 + Math.random() * 30),
-      humidity: Math.floor(40 + Math.random() * 40)
-    });
-  }
-  return readings;
-};
 
-const allReadings = generateReadings();
-const lastHourReadings = allReadings.slice(0, 12);
+const { state: readings, readingHistory, refresh } = useLiveData();
+const lastHourReadings = computed(() => readingHistory.value.slice(0, 12));
 
-const activeTab = ref('temperature-forecast');
+const activeTab = ref('current-data');
 </script>
 
 <template>
   <div class="flex-1 space-y-4 p-8 pt-6">
     <h1 class="text-3xl font-bold tracking-tight">Asia Markt</h1>
-    <Tabs v-model="activeTab" default-value="temperature-forecast" class="w-full">
+    <div class="relative flex items-center gap-2">
+      <div class="flex items-center gap-2">
+        <span class="relative flex size-2">
+          <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
+          <span class="relative inline-flex size-2 rounded-full bg-green-500"></span>
+        </span>
+        Live Daten werden alle 5 Minuten automatisch aktualisiert
+        <Button @click="refresh" size="icon-sm" variant="ghost" title="Neu Laden">
+          <RefreshCcw />
+        </Button>
+      </div>
+    </div>
+    <Tabs v-model="activeTab" default-value="current-data" class="w-full">
       <TabsList class="mb-4">
-        <TabsTrigger value="temperature-forecast">Temperaturvorhersage</TabsTrigger>
         <TabsTrigger value="current-data">Aktuelle Daten</TabsTrigger>
+        <TabsTrigger value="temperature-forecast">Temperaturvorhersage</TabsTrigger>
       </TabsList>
       <TabsContent value="temperature-forecast">
         <TemperatureForecast />
       </TabsContent>
       <TabsContent value="current-data">
-        <CurrentVocValues />
+        <CurrentVocValues :temperature="readings.temperature" :gasResistance="readings.gasResistance"
+          :humidity="readings.humidity" :pressure="readings.pressure" />
       </TabsContent>
     </Tabs>
     <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
       <Card class="col-span-4">
         <CardHeader>
-          <CardTitle>{{activeTab === 'temperature-forecast' ? "Temperaturvorhersage" : "Temperaturverlauf"}}</CardTitle>
+          <CardTitle>{{ activeTab === 'temperature-forecast' ? "Temperaturvorhersage" : "Temperaturverlauf" }}
+          </CardTitle>
         </CardHeader>
         <CardContent class="p-0">
           <PersonTemperatureDiagramm v-if="activeTab === 'temperature-forecast'" />
-          <TemperatureTrendDiagramm v-else />
+          <TemperatureTrendDiagramm :readings="readingHistory" v-else />
         </CardContent>
       </Card>
       <Card class="col-span-3 flex flex-col">
@@ -80,7 +79,7 @@ const activeTab = ref('temperature-forecast');
                   </DialogDescription>
                 </DialogHeader>
                 <div class="h-[60vh] overflow-y-auto pr-4">
-                  <RecentReadings :readings="allReadings" />
+                  <RecentReadings :readings="readingHistory" />
                 </div>
               </DialogContent>
             </Dialog>
