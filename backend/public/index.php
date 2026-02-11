@@ -10,7 +10,6 @@ use Src\Database;
 use Src\Response;
 use Src\DataController;
 
-// Allow CORS for development (adjust for production)
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
@@ -24,9 +23,8 @@ $dsn = sprintf('mysql:host=%s;dbname=%s;charset=utf8mb4', DB_HOST, DB_NAME);
 $db = new Database($dsn, DB_USER, DB_PASS);
 $controller = new DataController($db);
 
-// Simple routing based on path and method
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$base = rtrim(dirname(dirname($_SERVER['SCRIPT_NAME'])), '/'); // Ein Level höher
+$base = rtrim(dirname(dirname($_SERVER['SCRIPT_NAME'])), '/'); 
 $relative = '/' . ltrim(substr($path, strlen($base)), '/');
 $segments = array_values(array_filter(explode('/', $relative)));
 
@@ -44,11 +42,52 @@ try {
             $controller->getVocData();
             exit;
         }
+
+        if ($method === 'GET' && count($segments) === 2 && $segments[1] === 'period') {
+            $startDate = $_GET['start'] ?? null;
+            $endDate = $_GET['end'] ?? null;
+        
+            if (!$startDate || !$endDate) {
+                Response::json(['error' => 'Missing start or end date parameter'], 400);
+                exit;
+            }
+            
+            $controller->getVocDataPeriod($startDate, $endDate);
+            exit;
+        }
     }
 
     if ($segments[0] === 'radar') {
         if ($method === 'GET' && count($segments) === 1) {
             $controller->getRadarData();
+            exit;
+        }
+
+        if ($method === 'GET' && count($segments) === 2 && $segments[1] === 'period') {
+            $startDate = $_GET['start'] ?? null;
+            $endDate = $_GET['end'] ?? null;
+        
+            if (!$startDate || !$endDate) {
+                Response::json(['error' => 'Missing start or end date parameter'], 400);
+                exit;
+            }
+            
+            $controller->getRadarDataPeriod($startDate, $endDate);
+            exit;
+        }
+    }
+
+    if ($segments[0] === 'period') {
+        if ($method === 'GET' && count($segments) === 1) {
+            $startDate = $_GET['start'] ?? null;
+            $endDate = $_GET['end'] ?? null;
+        
+            if (!$startDate || !$endDate) {
+                Response::json(['error' => 'Missing start or end date parameter'], 400);
+                exit;
+            }
+            
+            $controller->getDataPeriod($startDate, $endDate);
             exit;
         }
     }

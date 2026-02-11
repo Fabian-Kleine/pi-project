@@ -46,3 +46,18 @@ Deactivate the virtual environment when finished:
 
 ---
 Generated on 29 October 2025.
+
+## Verkabelung beider Sensoren
+
+### BME680 Sensor
+
+VIN -> 3v3
+GND -> GND
+SCK -> SCL1
+SDI -> SDA1
+
+### RCWL-0516
+
+VIN -> 3v3
+CUT -> GPO22
+GND -> GND
