@@ -8,6 +8,7 @@ const props = defineProps<{
     readings: ReadingHistory[]
 }>();
 
+// transform readings to match the format expected by the LineChart component
 const transformedReadings = computed(() => {
     return props.readings.map((reading) => {
         return {
@@ -17,6 +18,7 @@ const transformedReadings = computed(() => {
     }).reverse();
 });
 
+// format x and y axis ticks
 const xFormatter = (tick: number | Date) => {
   if (tick instanceof Date) return tick.toISOString()
 

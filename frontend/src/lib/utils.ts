@@ -6,6 +6,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+// format a date to ISO format without timezone (e.g. 2024-06-01T12:00:00)
 export function formatISODateLocal(date: Date) {
   const pad = (n: number) => String(n).padStart(2, "0");
 

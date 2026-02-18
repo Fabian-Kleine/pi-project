@@ -1,5 +1,6 @@
 import bme680
 
+# BME680 sensor initialization and data retrieval functions
 def initialize_bme680():
     try:
         sensor = bme680.BME680(bme680.I2C_ADDR_PRIMARY)
@@ -18,6 +19,7 @@ def initialize_bme680():
 
     return sensor
 
+# Function to get BME680 sensor data as a dictionary
 def get_bme680_data(sensor):
     if sensor.get_sensor_data():
         data = {
