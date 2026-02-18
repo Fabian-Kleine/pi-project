@@ -1,6 +1,6 @@
 import type { ReadingHistory } from "@/types";
 import { onScopeDispose, reactive, ref, type Ref } from "vue";
-import { formatISODate } from "./utils";
+import { formatISODateLocal } from "./utils";
 
 interface GetLiveDataResponse {
     temperature: number;
@@ -14,8 +14,8 @@ export const getLiveData = async (): Promise<GetLiveDataResponse> => {
     const now = new Date();
     const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
-    const formattedNow = formatISODate(now);
-    const formattedOneDayAgo = formatISODate(oneDayAgo)
+    const formattedNow = formatISODateLocal(now);
+    const formattedOneDayAgo = formatISODateLocal(oneDayAgo)
     
     const response = await fetch(
         `http://172.16.111.34/pi-project/backend/voc/period/?start=${formattedOneDayAgo}&end=${formattedNow}`
