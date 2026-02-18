@@ -92,6 +92,13 @@ try {
         }
     }
 
+    if($segments[0] === 'regression' ) {
+        if($method === 'GET' && count($segments) === 1) {
+            $controller->getRegressionData();
+            exit;
+        }
+    }
+
     Response::json(['error' => 'Not Found'], 404);
 } catch (Throwable $e) {
     Response::json(['error' => 'Server error', 'details' => $e->getMessage()], 500);

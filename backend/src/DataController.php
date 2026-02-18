@@ -112,16 +112,30 @@ class DataController
 
     public function getRadarDataPeriod($startDate, $endDate): void {
          $query = "
-        SELECT 
-            id, 
-            sensor_data, 
-            created_at 
-        FROM radar_sensor_data 
-        WHERE created_at BETWEEN ? AND ? 
-        ORDER BY created_at DESC
+            SELECT 
+                id, 
+                sensor_data, 
+                created_at 
+            FROM radar_sensor_data 
+            WHERE created_at BETWEEN ? AND ? 
+            ORDER BY created_at DESC
         ";
 
         $data = $this->db->fetchAll($query, [$startDate, $endDate]);
+        Response::json($data);
+    }
+
+    public function getRegressionData(): void {
+        $query = "
+            SELECT 
+                voc_value,
+                temperature,
+                persons_estimated
+            FROM training_data
+            ORDER BY timestamp ASC
+        ";
+
+        $data = $this->db->fetchAll($query);
         Response::json($data);
     }
 
