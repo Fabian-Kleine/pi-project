@@ -41,7 +41,10 @@ const activeTab = ref('current-data');
 
 <template>
   <div class="flex-1 space-y-4 p-8 pt-6">
-    <h1 class="text-3xl font-bold tracking-tight">Asia Markt</h1>
+  <div class="flex items-center gap-2">
+      <img src="/logo.png" alt="Logo" width="60" height="60" />
+      <h1 class="text-3xl font-bold tracking-tight">Asia Markt</h1>
+  </div>
     <div class="relative flex items-center gap-2">
       <div class="flex items-center gap-2">
         <span class="relative flex size-2">
