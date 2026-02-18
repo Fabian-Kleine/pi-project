@@ -12,6 +12,7 @@ try {
     $db->execute("DELETE FROM voc_sensor_data WHERE created_at < NOW() - INTERVAL 30 DAY");
     $db->execute("DELETE FROM radar_sensor_data WHERE created_at < NOW() - INTERVAL 30 DAY");
     echo("cleaned up...");
+    //This File is executed per Cronjob every day at 1am to delete every Data that is older than 30 Days
     
 } catch (Exception $e) {
     echo($e);

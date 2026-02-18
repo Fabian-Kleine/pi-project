@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 namespace Src;
+//This file contains the functions that are used in the index.php which are creating the SQL Statement and executes it
 
 class DataController
 {
@@ -12,7 +13,7 @@ class DataController
         $this->db = $db;
     }
 
-    public function index(): void
+    public function index(): void 
     {
         $radarQuery = "
             SELECT 
@@ -34,7 +35,7 @@ class DataController
         ";
         $vocData = $this->db->fetchAll($vocQuery);
 
-        $groupedData = [
+        $groupedData = [ //Groups the Data from the Database from the SQL Requests
             'radar_sensor' => $radarData,
             'voc_sensor' => $vocData
         ];
@@ -65,7 +66,7 @@ class DataController
             ORDER BY created_at DESC
             ";
 
-        $vocData = $this->db->fetchAll($vocQuery, [$startDate, $endDate]);
+        $vocData = $this->db->fetchAll($vocQuery, [$startDate, $endDate]); //Parses the Parameters from the GET Request to insert it to the SQL Statetment
 
         $groupedData = [
             'radar_sensor' => $radarData,
@@ -112,16 +113,30 @@ class DataController
 
     public function getRadarDataPeriod($startDate, $endDate): void {
          $query = "
-        SELECT 
-            id, 
-            sensor_data, 
-            created_at 
-        FROM radar_sensor_data 
-        WHERE created_at BETWEEN ? AND ? 
-        ORDER BY created_at DESC
+            SELECT 
+                id, 
+                sensor_data, 
+                created_at 
+            FROM radar_sensor_data 
+            WHERE created_at BETWEEN ? AND ? 
+            ORDER BY created_at DESC
         ";
 
         $data = $this->db->fetchAll($query, [$startDate, $endDate]);
+        Response::json($data);
+    }
+
+    public function getRegressionData(): void {
+        $query = "
+            SELECT 
+                voc_value,
+                temperature,
+                persons_estimated
+            FROM training_data
+            ORDER BY timestamp ASC
+        ";
+
+        $data = $this->db->fetchAll($query);
         Response::json($data);
     }
 
