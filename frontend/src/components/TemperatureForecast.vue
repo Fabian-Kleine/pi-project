@@ -1,6 +1,18 @@
 <script setup lang="ts">
 import { Users, UserX } from "lucide-vue-next";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+
+const props = defineProps<{
+  emptyRoom: number | null
+  p60: number | null
+  p120: number | null
+  p180: number | null
+}>()
+
+function formatTemp(value: number | null) {
+  if (value === null) return "—"
+  return `${value} °C`
+}
 </script>
 
 <template>
@@ -11,7 +23,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
         <UserX class="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent>
-        <div class="text-2xl font-bold">20 °C</div>
+        <div class="text-2xl font-bold">{{ formatTemp(props.emptyRoom) }}</div>
       </CardContent>
     </Card>
     <Card class="gap-2">
@@ -20,7 +32,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
         <Users class="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent>
-        <div class="text-2xl font-bold">20 °C</div>
+        <div class="text-2xl font-bold">{{ formatTemp(props.p60) }}</div>
       </CardContent>
     </Card>
     <Card class="gap-2">
@@ -29,7 +41,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
         <Users class="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent>
-        <div class="text-2xl font-bold">20 °C</div>
+        <div class="text-2xl font-bold">{{ formatTemp(props.p120) }}</div>
       </CardContent>
     </Card>
     <Card class="gap-2">
@@ -38,7 +50,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
         <Users class="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent>
-        <div class="text-2xl font-bold">20 °C</div>
+        <div class="text-2xl font-bold">{{ formatTemp(props.p180) }}</div>
       </CardContent>
     </Card>
   </div>

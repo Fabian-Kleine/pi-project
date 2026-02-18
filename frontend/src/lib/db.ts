@@ -1,6 +1,7 @@
 import type { ReadingHistory } from "@/types";
 import { onScopeDispose, reactive, ref, type Ref } from "vue";
 import { formatISODateLocal } from "./utils";
+import { API_BASE_URL, UPDATE_INTERVAL_MS } from "@/config";
 
 interface GetLiveDataResponse {
     temperature: number;
@@ -10,6 +11,7 @@ interface GetLiveDataResponse {
     readingHistory: ReadingHistory[];
 }
 
+// Fetch live data from the backend and transform it to match the GetLiveDataResponse interface
 export const getLiveData = async (): Promise<GetLiveDataResponse> => {
     const now = new Date();
     const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
@@ -18,7 +20,7 @@ export const getLiveData = async (): Promise<GetLiveDataResponse> => {
     const formattedOneDayAgo = formatISODateLocal(oneDayAgo)
     
     const response = await fetch(
-        `http://172.16.111.34/pi-project/backend/voc/period/?start=${formattedOneDayAgo}&end=${formattedNow}`
+        `${API_BASE_URL}/pi-project/backend/voc/period/?start=${formattedOneDayAgo}&end=${formattedNow}`
     );
 
     const results = await response.json();
@@ -26,8 +28,6 @@ export const getLiveData = async (): Promise<GetLiveDataResponse> => {
     if (!results || !results.length) {
         throw new Error("Error fetching data!");
     }
-
-    console.log(results);
 
     const transformedResults: ReadingHistory[] = results.map((data: any) => {
         const sensorData = JSON.parse(data.sensor_data);
@@ -43,8 +43,6 @@ export const getLiveData = async (): Promise<GetLiveDataResponse> => {
         }
     });
 
-    console.log(transformedResults)
-
     const latestValues = transformedResults[0];
 
     return {
@@ -56,7 +54,8 @@ export const getLiveData = async (): Promise<GetLiveDataResponse> => {
     };
 }
 
-export function useLiveData(updateIntervalMs = 5 * 60 * 1000) {
+// hook to manage live data fetching and state
+export function useLiveData(updateIntervalMs = UPDATE_INTERVAL_MS) {
     const state = reactive<Omit<GetLiveDataResponse, "readingHistory">>({
         temperature: 0,
         humidity: 0,
@@ -70,7 +69,6 @@ export function useLiveData(updateIntervalMs = 5 * 60 * 1000) {
 
     const refresh = async () => {
         const data = await getLiveData();
-        console.log("Live data refreshed:", data);
         state.temperature = data.temperature;
         state.humidity = data.humidity;
         state.pressure = data.pressure;
@@ -79,10 +77,9 @@ export function useLiveData(updateIntervalMs = 5 * 60 * 1000) {
     };
 
     const start = () => {
-        // prevent multiple intervals if useLiveData() is called more than once in same scope
         stop();
 
-        refresh(); // initial load
+        refresh();
         timer = setInterval(refresh, updateIntervalMs);
     };
 
@@ -91,17 +88,44 @@ export function useLiveData(updateIntervalMs = 5 * 60 * 1000) {
         timer = undefined;
     };
 
-    // start immediately when the composable is created (works in and out of components)
     start();
 
-    // auto-cleanup when used inside a component/effect scope
     onScopeDispose(() => stop());
 
     return {
         state,
-        readingHistory, // ref
+        readingHistory,
         refresh,
         start,
         stop,
     };
+}
+
+interface RegressonDataResponse {
+    vocValue: number;
+    temperature: number;
+    personCount: number;
+}
+
+// Fetch regression data from the backend and transform it to match the RegressonDataResponse interface
+export const getRegressionData = async (): Promise<RegressonDataResponse[]> => {
+    const response = await fetch(
+        `${API_BASE_URL}/pi-project/backend/regression/`
+    );
+
+    const results = await response.json();  
+
+    if (!results || !results.length) {
+        throw new Error("Error fetching regression data!");
+    }
+
+    const transformedResults: RegressonDataResponse[] = results.map((data: any) => {
+        return {
+            vocValue: data.voc_value,
+            temperature: parseFloat(data.temperature),
+            personCount: data.persons_estimated
+        };
+    });
+
+    return transformedResults;
 }

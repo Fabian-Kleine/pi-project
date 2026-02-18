@@ -8,12 +8,14 @@ config = {
     "gpio_pin": 22
 }
 
+# Read BME680 sensor data and save to database
 def save_bme680_data(sensor):
     data = get_bme680_data(sensor)
     if data:
         print(f"Sensor data: {data}")
         save_sensor_data_to_db('voc_sensor_data', data)  
 
+# Read GPIO sensor state and save to database
 def save_gpio_data(): 
     sensor_state = get_gpio_sensor_state(config['gpio_pin'])
     data = {
@@ -22,7 +24,7 @@ def save_gpio_data():
     print(f"GPIO Sensor data: {data}")
     save_sensor_data_to_db('radar_sensor_data', data)
 
-
+# Main loop to read sensor data and save to database at regular intervals
 def loop(bme680_sensor):
     print(f"Starting sensor loop, interval={config['interval']}s")
 
@@ -42,6 +44,7 @@ def loop(bme680_sensor):
         except Exception:
             pass
 
+# Main entry point
 def main():
     bme680_sensor = initialize_bme680()
     initialize_gpio(config['gpio_pin'])
