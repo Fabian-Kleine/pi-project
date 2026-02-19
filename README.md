@@ -70,6 +70,8 @@ frontend/
 
 ## Datenbankstruktur
 
+Ein dump der Datenbank befindet sich ebenfalls im Repository unter `project_prod.sql`
+
 ### Radar Sensor
 
 #### Struktur
